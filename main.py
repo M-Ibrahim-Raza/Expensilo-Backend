@@ -1,4 +1,6 @@
-from db.db_setup import engine,init_db
-from core.config import settings
+from fastapi import FastAPI
+from routers import user
 
-init_db()
+app = FastAPI()
+
+app.include_router(user.router)

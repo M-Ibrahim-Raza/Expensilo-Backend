@@ -2,6 +2,7 @@ from typing import Optional
 from sqlalchemy import String, BigInteger, ForeignKey, func, Enum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from enums.transaction_type import TransactionType
+
 from .base import Base
 
 

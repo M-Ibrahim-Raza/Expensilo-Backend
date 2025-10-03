@@ -4,6 +4,7 @@ from sqlalchemy import BigInteger, ForeignKey, func, Numeric, String, DateTime
 from sqlalchemy.dialects.postgresql import ARRAY
 from decimal import Decimal
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from .base import Base
 
 

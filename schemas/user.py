@@ -1,9 +1,8 @@
-from typing import Optional
+from typing import Optional, Any
 from typing_extensions import Annotated
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, Json, ConfigDict
 
 
-# ---------- Base ----------
 class UserBase(BaseModel):
     name: Annotated[
         str,
@@ -40,7 +39,7 @@ class UserBase(BaseModel):
         ),
     ]
     preferences: Annotated[
-        Optional[str],
+        Json,
         Field(
             title="User Preferences",
             description="Preferences stored as JSON string",
@@ -50,14 +49,12 @@ class UserBase(BaseModel):
     ]
 
 
-# ---------- Create ----------
 class UserCreate(UserBase):
     """Schema for creating a new user"""
 
     pass
 
 
-# ---------- Update ----------
 class UserUpdate(BaseModel):
     """Schema for updating user fields"""
 
@@ -112,5 +109,4 @@ class UserRead(UserBase):
         ),
     ]
 
-    class Config:
-        from_attributes = True  # ✅ ORM compatibility with SQLAlchemy
+    model_config = ConfigDict(from_attributes=True)

@@ -1,8 +1,3 @@
-"""
-SQLAlchemy Models Package
-Contains all database models with relationships
-"""
-
 from .base import Base
 from .user import User
 from .category import Category
