@@ -16,11 +16,14 @@ router = APIRouter(
 @router.get(
     "/{user_id}",
     status_code=status.HTTP_200_OK,
-    summary="Read details of exsiting user",
+    summary="Get details of exsiting user",
     response_description="The details of user",
 )
-def read_user_endpoint(
-    user_id: Annotated[int, Path(...)], db: Session = Depends(get_db_session)
+def get_user_endpoint(
+    user_id: Annotated[
+        int, Path(..., title="User ID", description="Unique ID of the user")
+    ],
+    db: Session = Depends(get_db_session),
 ) -> UserReadResponse:
 
     user: UserReadResponse = read_user(db=db, user_id=user_id)
@@ -28,7 +31,7 @@ def read_user_endpoint(
 
 
 @router.post(
-    "/",
+    "",
     response_model=UserReadResponse,
     status_code=status.HTTP_201_CREATED,
     summary="Create a new user",
@@ -51,7 +54,9 @@ def create_user_endpoint(
     response_description="The updated details of user",
 )
 def update_user_endpoint(
-    user_id: Annotated[int, Path(...)],
+    user_id: Annotated[
+        int, Path(..., title="User ID", description="Unique ID of the user")
+    ],
     user_update_request: UserUpdateRequest,
     db: Session = Depends(get_db_session),
 ) -> UserReadResponse:
@@ -59,6 +64,3 @@ def update_user_endpoint(
         db=db, user_id=user_id, user_update_request=user_update_request
     )
     return user
-
-
-# @router.get("{user_id}/preferences")

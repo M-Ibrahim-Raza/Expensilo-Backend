@@ -1,8 +1,8 @@
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import IntegrityError
-from routers import user
+from routers import user, category, user_category
 
 app = FastAPI()
 
@@ -25,3 +25,5 @@ app.add_middleware(
 
 
 app.include_router(user.router)
+app.include_router(category.router)
+app.include_router(user_category.router)
