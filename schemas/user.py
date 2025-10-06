@@ -39,23 +39,23 @@ class UserBase(BaseModel):
         ),
     ]
     preferences: Annotated[
-        Json,
+        dict[str, Any] | None,
         Field(
             title="User Preferences",
-            description="Preferences stored as JSON string",
-            example='{"theme": "dark", "notifications": true}',
+            description="Preferences stored as JSON",
+            example={"theme": "dark", "notifications": True},
             default=None,
         ),
     ]
 
 
-class UserCreate(UserBase):
+class UserCreateRequest(UserBase):
     """Schema for creating a new user"""
 
     pass
 
 
-class UserUpdate(BaseModel):
+class UserUpdateRequest(BaseModel):
     """Schema for updating user fields"""
 
     name: Annotated[
@@ -66,16 +66,16 @@ class UserUpdate(BaseModel):
             example="Alice Updated",
             default=None,
         ),
-    ] = None
+    ]
     password: Annotated[
         Optional[str],
         Field(
             title="Password",
             description="New password to update",
-            example="new_hashed_password_string",
+            example="new_password_string",
             default=None,
         ),
-    ] = None
+    ]
     google_auth: Annotated[
         Optional[str],
         Field(
@@ -84,20 +84,19 @@ class UserUpdate(BaseModel):
             example="ya29.A0AVA9y2...",
             default=None,
         ),
-    ] = None
+    ]
     preferences: Annotated[
-        Optional[str],
+        dict[str, Any] | None,
         Field(
             title="User Preferences",
             description="Updated preferences stored as JSON string",
             example='{"theme": "light", "notifications": false}',
             default=None,
         ),
-    ] = None
+    ]
 
 
-# ---------- Read (Response) ----------
-class UserRead(UserBase):
+class UserReadResponse(UserBase):
     """Schema for returning user details"""
 
     id: Annotated[
