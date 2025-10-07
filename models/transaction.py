@@ -1,5 +1,5 @@
 from typing import Optional
-from sqlalchemy import String, BigInteger, ForeignKey, func, Enum
+from sqlalchemy import String, BigInteger, ForeignKey, Enum, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from enums.transaction_type import TransactionType
 
@@ -8,6 +8,10 @@ from .base import Base
 
 class Transaction(Base):
     __tablename__ = "transaction"
+
+    __table_args__ = (
+        UniqueConstraint("type", "title", "category_id", name="uq_type_title_category"),
+    )
 
     id: Mapped[int] = mapped_column(
         BigInteger,

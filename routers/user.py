@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends, status, HTTPException, Path
+from fastapi import APIRouter, Depends, status, Path
 from typing import Annotated
 from sqlalchemy.orm import Session
 from db.db_setup import get_db_session
 from schemas.user import UserCreateRequest, UserReadResponse, UserUpdateRequest
-from services.user import create_user, read_user, update_user
+from services.user import create_user, read_user, update_user, delete_user
 
 
 router = APIRouter(
@@ -15,6 +15,7 @@ router = APIRouter(
 
 @router.get(
     "/{user_id}",
+    response_model=UserReadResponse,
     status_code=status.HTTP_200_OK,
     summary="Get details of exsiting user",
     response_description="The details of user",
@@ -42,7 +43,24 @@ def create_user_endpoint(
     db: Session = Depends(get_db_session),
 ) -> UserReadResponse:
 
-    user: UserReadResponse = create_user(db=db, user=user_create_request)
+    user: UserReadResponse = create_user(db=db, user_create_request=user_create_request)
+    return user
+
+
+@router.delete(
+    "/{user_id}",
+    response_model=UserReadResponse,
+    status_code=status.HTTP_202_ACCEPTED,
+    summary="Delete existing user",
+    response_description="The details of deleted user",
+)
+def delete_user_endpoint(
+    user_id: Annotated[
+        int, Path(..., title="User ID", description="Unique ID of the user")
+    ],
+    db: Session = Depends(get_db_session),
+) -> UserReadResponse:
+    user: UserReadResponse = delete_user(db=db, user_id=user_id)
     return user
 
 

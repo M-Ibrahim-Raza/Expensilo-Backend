@@ -2,11 +2,10 @@ from sqlalchemy.orm import Session
 from sqlalchemy import select
 from models import Category
 from fastapi import HTTPException, status
-from schemas.category import CategoriesReadResponse, CategoryRead
+from schemas.category import CategoriesReadResponse
 
 
 def read_categories(db: Session) -> CategoriesReadResponse:
-    pass
 
     categories = db.scalars(select(Category)).all()
 
@@ -46,3 +45,23 @@ def get_or_create_category(db: Session, category_name: str) -> int:
     db.refresh(new_category)
 
     return new_category.id
+
+
+def get_category_id(db: Session, category_name: str) -> str:
+
+    category = db.scalar(select(Category).where(Category.name == category_name))
+
+    if not category:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Category {category_name} not found",
+        )
+
+    return category.id
+
+
+def get_category_name(db: Session, category_id: int) -> str:
+
+    category: Category = db.get(Category, category_id)
+
+    return category.name

@@ -1,6 +1,6 @@
 from typing import Optional, Any
 from typing_extensions import Annotated
-from pydantic import BaseModel, EmailStr, Field, Json, ConfigDict
+from pydantic import BaseModel, EmailStr, Field, ConfigDict
 
 
 class UserBase(BaseModel):

@@ -1,15 +1,13 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, Session, DeclarativeBase
+from sqlalchemy.orm import sessionmaker, Session
 from core.config import settings
-from fastapi import Depends
 from models import Base
 from contextlib import contextmanager
 from typing import Generator
 
-# Create engine
 engine = create_engine(
     settings.DATABASE_URL,
-    echo=False,  # Set to False in production
+    echo=False,
     pool_pre_ping=True,  # Verify connections before using
     pool_size=5,
     max_overflow=10,
@@ -32,7 +30,6 @@ def drop_db() -> None:
     Base.metadata.drop_all(bind=engine)
 
 
-# Create a configured "Session" class
 SessionLocal = sessionmaker(autocommit=False, autoflush=True, bind=engine)
 
 

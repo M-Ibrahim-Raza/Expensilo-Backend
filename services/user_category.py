@@ -5,7 +5,7 @@ from schemas.user_category import UserCategoryResponse
 from schemas.category import CategoriesReadResponse
 from services.category import get_or_create_category
 from services.user import get_user
-from models import UserCategory
+from models import UserCategory, Category
 
 
 def read_user_categories(db: Session, user_id: int) -> CategoriesReadResponse:
@@ -49,7 +49,7 @@ def delete_user_category(db: Session, user_id: int, category_name: str):
 
     user = get_user(db=db, user_id=user_id)
 
-    user_category_to_delete = None
+    user_category_to_delete: UserCategory | None = None
     for user_category in user.categories:
         if user_category.category.name == category_name:
             user_category_to_delete = user_category
@@ -61,7 +61,7 @@ def delete_user_category(db: Session, user_id: int, category_name: str):
             detail=f"Category '{category_name}' not linked to user with id {user_id}",
         )
 
-    category = user_category_to_delete.category
+    category: Category = user_category_to_delete.category
 
     db.delete(user_category_to_delete)
 

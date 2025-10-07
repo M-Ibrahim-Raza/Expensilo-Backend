@@ -11,10 +11,16 @@ from .base import Base
 class UserTransaction(Base):
     __tablename__ = "user_transaction"
 
+    id: Mapped[int] = mapped_column(
+        BigInteger,
+        primary_key=True,
+        autoincrement=True,
+        comment="Unique identifier for user transaction",
+    )
+
     user_id: Mapped[int] = mapped_column(
         BigInteger,
         ForeignKey("user.id", ondelete="CASCADE"),
-        primary_key=True,
         nullable=False,
         comment="Reference to user",
     )
@@ -22,7 +28,6 @@ class UserTransaction(Base):
     transaction_id: Mapped[int] = mapped_column(
         BigInteger,
         ForeignKey("transaction.id", ondelete="CASCADE"),
-        primary_key=True,
         nullable=False,
         comment="Reference to transaction",
     )
@@ -45,7 +50,7 @@ class UserTransaction(Base):
         DateTime(timezone=True),
         nullable=False,
         server_default=func.current_timestamp(),
-        comment="Transaction timestamp)",
+        comment="Transaction timestamp",
     )
 
     updated_at: Mapped[datetime] = mapped_column(

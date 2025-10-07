@@ -25,17 +25,29 @@ def read_user(db: Session, user_id: int) -> UserReadResponse:
     return UserReadResponse.model_validate(user)
 
 
-def create_user(db: Session, user: UserCreateRequest) -> UserReadResponse:
+def create_user(
+    db: Session, user_create_request: UserCreateRequest
+) -> UserReadResponse:
 
-    user_data = user.model_dump()
-
-    user = User(**user_data)
+    user: User = User(**user_create_request.model_dump())
 
     db.add(user)
     db.commit()
     db.refresh(user)
 
     return UserReadResponse.model_validate(user)
+
+
+def delete_user(db: Session, user_id: int) -> UserReadResponse:
+
+    user: User = get_user(db=db, user_id=user_id)
+
+    deleted_user = UserReadResponse.model_validate(user)
+
+    db.delete(user)
+    db.commit()
+
+    return deleted_user
 
 
 def update_user(
