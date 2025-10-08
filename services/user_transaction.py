@@ -1,11 +1,11 @@
-from sqlalchemy.orm import Session
+from decimal import Decimal
+
 from fastapi import HTTPException, status
 from sqlalchemy import select
-from services.transaction import get_or_create_transaction
+from sqlalchemy.orm import Session
+
+from models import Transaction, UserTransaction
 from schemas.transaction import TransactionBase
-from services.user import get_user
-from services.category import get_category_id
-from models import UserTransaction, Transaction
 from schemas.user_transaction import (
     UserTransactionResponse,
     UserTransactionRequest,
@@ -13,7 +13,9 @@ from schemas.user_transaction import (
     UserTransactionsResponse,
     UserTransactionUpdateRequest,
 )
-from decimal import Decimal
+from services.category import get_category_id
+from services.transaction import get_or_create_transaction
+from services.user import get_user
 
 
 def read_user_transactions(db: Session, user_id: int) -> UserTransactionsResponse:

@@ -23,8 +23,6 @@ class UserCategory(Base):
         comment="Reference to category",
     )
 
-    # =====================| TO BE REVIEWED | =====================
-
     user = relationship("User", back_populates="categories", lazy="joined")
 
     category = relationship("Category", back_populates="users", lazy="joined")

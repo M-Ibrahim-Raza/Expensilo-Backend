@@ -1,21 +1,24 @@
+from typing import Annotated
+
 from fastapi import APIRouter, status, Path, Depends
+from sqlalchemy.orm import Session
+
+from db import get_db_session
+from schemas.category import CategoriesResponse
+from schemas.user_category import UserCategoryRequest, UserCategoryResponse
 from services.user_category import (
     add_user_category,
     read_user_categories,
     delete_user_category,
 )
-from sqlalchemy.orm import Session
-from db import get_db_session
-from schemas.user_category import UserCategoryResponse, UserCategoryRequest
-from schemas.category import CategoriesReadResponse
-from typing import Annotated
+
 
 router = APIRouter(prefix="/users/{user_id}/category", tags=["Users Category"])
 
 
 @router.get(
     "",
-    response_model=CategoriesReadResponse,
+    response_model=CategoriesResponse,
     status_code=status.HTTP_200_OK,
     summary="Get user categories",
     response_description="List of categories names",
@@ -25,9 +28,9 @@ def get_user_categories_endpoint(
         int, Path(..., title="User ID", description="Unique ID of the user")
     ],
     db: Session = Depends(get_db_session),
-) -> CategoriesReadResponse:
+) -> CategoriesResponse:
 
-    categories: CategoriesReadResponse = read_user_categories(db=db, user_id=user_id)
+    categories: CategoriesResponse = read_user_categories(db=db, user_id=user_id)
 
     return categories
 

@@ -1,8 +1,10 @@
-from pydantic import BaseModel, Field, ConfigDict
 from typing import Annotated
+
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class CategoryRead(BaseModel):
+
     id: Annotated[
         int,
         Field(
@@ -25,7 +27,8 @@ class CategoryRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class CategoriesReadResponse(BaseModel):
+class CategoriesResponse(BaseModel):
+
     categories: Annotated[
         list[CategoryRead],
         Field(title="Categories List", description="The list of all the categories"),

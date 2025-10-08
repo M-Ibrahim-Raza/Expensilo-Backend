@@ -18,12 +18,9 @@ class Category(Base):
         String,
         unique=True,
         nullable=False,
-        comment="Category name (e.g., Food, Transport, Entertainment)",
+        comment="Category name",
     )
 
-    # =====================| TO BE REVIEWED | =====================
-
-    # One category can belong to many users (through user_category junction table)
     users = relationship(
         "UserCategory",
         back_populates="category",
@@ -31,7 +28,6 @@ class Category(Base):
         lazy="selectin",
     )
 
-    # One category can have many transactions
     transactions = relationship(
         "Transaction", back_populates="category", lazy="selectin"
     )

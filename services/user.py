@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from models import User
 from typing import Optional
-from schemas.user import UserCreateRequest, UserReadResponse, UserUpdateRequest
+from schemas.user import UserCreateRequest, UserResponse, UserUpdateRequest
 from fastapi import HTTPException, status
 
 
@@ -18,16 +18,14 @@ def get_user(db: Session, user_id: int) -> Optional[User]:
     return user
 
 
-def read_user(db: Session, user_id: int) -> UserReadResponse:
+def read_user(db: Session, user_id: int) -> UserResponse:
 
     user = get_user(db=db, user_id=user_id)
 
-    return UserReadResponse.model_validate(user)
+    return UserResponse.model_validate(user)
 
 
-def create_user(
-    db: Session, user_create_request: UserCreateRequest
-) -> UserReadResponse:
+def create_user(db: Session, user_create_request: UserCreateRequest) -> UserResponse:
 
     user: User = User(**user_create_request.model_dump())
 
@@ -35,14 +33,14 @@ def create_user(
     db.commit()
     db.refresh(user)
 
-    return UserReadResponse.model_validate(user)
+    return UserResponse.model_validate(user)
 
 
-def delete_user(db: Session, user_id: int) -> UserReadResponse:
+def delete_user(db: Session, user_id: int) -> UserResponse:
 
     user: User = get_user(db=db, user_id=user_id)
 
-    deleted_user = UserReadResponse.model_validate(user)
+    deleted_user = UserResponse.model_validate(user)
 
     db.delete(user)
     db.commit()
@@ -52,7 +50,7 @@ def delete_user(db: Session, user_id: int) -> UserReadResponse:
 
 def update_user(
     db: Session, user_id: int, user_update_request: UserUpdateRequest
-) -> UserReadResponse:
+) -> UserResponse:
 
     user = get_user(db=db, user_id=user_id)
 
@@ -64,4 +62,4 @@ def update_user(
     db.commit()
     db.refresh(user)
 
-    return UserReadResponse.model_validate(user)
+    return UserResponse.model_validate(user)

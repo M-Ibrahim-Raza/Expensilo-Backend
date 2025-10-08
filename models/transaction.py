@@ -1,8 +1,9 @@
 from typing import Optional
+
 from sqlalchemy import String, BigInteger, ForeignKey, Enum, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from enums.transaction_type import TransactionType
 
+from enums import TransactionType
 from .base import Base
 
 
@@ -25,7 +26,7 @@ class Transaction(Base):
         ForeignKey("category.id", ondelete="SET NULL"),
         nullable=True,
         default=None,
-        comment="Reference to category (NULL allowed)",
+        comment="Reference to category (NULL Allowed)",
     )
 
     type: Mapped[TransactionType] = mapped_column(
@@ -38,12 +39,8 @@ class Transaction(Base):
         String, nullable=False, comment="Transaction title"
     )
 
-    # =====================| TO BE REVIEWED | =====================
-
-    # Many transactions belong to exactly one category
     category = relationship("Category", back_populates="transactions", lazy="joined")
 
-    # One transaction can belong to many users (through user_transaction junction table)
     users = relationship(
         "UserTransaction",
         back_populates="transaction",

@@ -1,8 +1,10 @@
-from pydantic import BaseModel, Field, ConfigDict
 from typing import Annotated, Optional, Type
 from decimal import Decimal
 from datetime import datetime
-from enums.transaction_type import TransactionType
+
+from pydantic import BaseModel, Field, ConfigDict
+
+from enums import TransactionType
 from models import UserTransaction
 
 
@@ -152,6 +154,7 @@ class UserTransactionResponse(UserTransactionRequest):
 
 
 class UserTransactionsResponse(BaseModel):
+
     transactions: Annotated[
         list[UserTransactionResponse],
         Field(

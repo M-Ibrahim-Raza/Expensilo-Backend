@@ -1,8 +1,10 @@
-from pydantic import BaseModel, Field, ConfigDict
 from typing import Annotated
+
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class UserCategoryRequest(BaseModel):
+
     category_name: Annotated[
         str,
         Field(
@@ -15,6 +17,7 @@ class UserCategoryRequest(BaseModel):
 
 
 class UserCategoryResponse(BaseModel):
+
     user_id: Annotated[
         int, Field(..., title="User ID", description="ID of the user", example=1)
     ]

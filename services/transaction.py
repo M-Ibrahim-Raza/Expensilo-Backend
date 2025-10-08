@@ -1,11 +1,13 @@
-from sqlalchemy.orm import Session
-from schemas.transaction import TransactionsReadResponse, TransactionBase
 from sqlalchemy import select
-from models import Transaction
+from sqlalchemy.orm import Session
+
 from fastapi import HTTPException, status
 
+from models import Transaction
+from schemas.transaction import TransactionsResponse, TransactionBase
 
-def read_transactions(db: Session) -> TransactionsReadResponse:
+
+def read_transactions(db: Session) -> TransactionsResponse:
 
     transactions = db.scalars(select(Transaction)).all()
 
@@ -15,7 +17,7 @@ def read_transactions(db: Session) -> TransactionsReadResponse:
             detail="No transactions found",
         )
 
-    return TransactionsReadResponse(transactions=transactions)
+    return TransactionsResponse(transactions=transactions)
 
 
 def get_or_create_transaction(db: Session, transaction: TransactionBase) -> int:

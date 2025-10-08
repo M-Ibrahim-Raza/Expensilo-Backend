@@ -1,18 +1,19 @@
-from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 from sqlalchemy import select
+from sqlalchemy.orm import Session
+
+from models import Category, UserCategory
+from schemas.category import CategoriesResponse
 from schemas.user_category import UserCategoryResponse
-from schemas.category import CategoriesReadResponse
 from services.category import get_or_create_category
 from services.user import get_user
-from models import UserCategory, Category
 
 
-def read_user_categories(db: Session, user_id: int) -> CategoriesReadResponse:
+def read_user_categories(db: Session, user_id: int) -> CategoriesResponse:
 
     user = get_user(db=db, user_id=user_id)
 
-    categories: CategoriesReadResponse = CategoriesReadResponse(
+    categories: CategoriesResponse = CategoriesResponse(
         categories=[uc.category for uc in user.categories]
     )
     return categories

@@ -1,11 +1,8 @@
+from typing import Annotated
+
 from fastapi import APIRouter, status, Path, Depends
-from services.user_transaction import (
-    add_user_transaction,
-    read_user_transactions,
-    delete_user_transaction,
-    update_user_transaction,
-)
 from sqlalchemy.orm import Session
+
 from db import get_db_session
 from schemas.user_transaction import (
     UserTransactionRequest,
@@ -13,7 +10,13 @@ from schemas.user_transaction import (
     UserTransactionsResponse,
     UserTransactionUpdateRequest,
 )
-from typing import Annotated
+from services.user_transaction import (
+    add_user_transaction,
+    read_user_transactions,
+    delete_user_transaction,
+    update_user_transaction,
+)
+
 
 router = APIRouter(prefix="/users/{user_id}/transaction", tags=["Users Transaction"])
 

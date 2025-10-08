@@ -1,11 +1,13 @@
-from sqlalchemy.orm import Session
 from sqlalchemy import select
-from models import Category
+from sqlalchemy.orm import Session
+
 from fastapi import HTTPException, status
-from schemas.category import CategoriesReadResponse
+
+from models import Category
+from schemas.category import CategoriesResponse
 
 
-def read_categories(db: Session) -> CategoriesReadResponse:
+def read_categories(db: Session) -> CategoriesResponse:
 
     categories = db.scalars(select(Category)).all()
 
@@ -15,7 +17,7 @@ def read_categories(db: Session) -> CategoriesReadResponse:
             detail="No categories found",
         )
 
-    return CategoriesReadResponse(categories=categories)
+    return CategoriesResponse(categories=categories)
 
 
 def read_category_users(db: Session, category_name: str) -> list[int]:

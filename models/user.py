@@ -1,8 +1,10 @@
 from __future__ import annotations
+
 from typing import Optional
+
 from sqlalchemy import String, BigInteger
-from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
 
@@ -37,10 +39,6 @@ class User(Base):
         JSONB, nullable=True, comment="User preferences stored as JSON"
     )
 
-    # =====================| TO BE REVIEWED | =====================
-
-    # Relationships
-    # One user can have many categories (through user_category junction table)
     categories = relationship(
         "UserCategory",
         back_populates="user",
@@ -48,7 +46,6 @@ class User(Base):
         lazy="selectin",
     )
 
-    # One user can have many transactions (through user_transaction junction table)
     transactions = relationship(
         "UserTransaction",
         back_populates="user",
