@@ -1,7 +1,7 @@
 from sqlalchemy import BigInteger, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from db import Base
+from .base import Base
 
 
 class UserCategory(Base):

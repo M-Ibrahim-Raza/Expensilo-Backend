@@ -5,7 +5,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 
 from core import settings
-from  .base import Base
+from models import Base
 
 
 engine = create_engine(
