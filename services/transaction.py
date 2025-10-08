@@ -3,13 +3,15 @@ from sqlalchemy.orm import Session
 
 from fastapi import HTTPException, status
 
+from db import add_commit_refresh
+
 from models import Transaction
 from schemas.transaction import TransactionsResponse, TransactionBase
 
 
 def read_transactions(db: Session) -> TransactionsResponse:
 
-    transactions = db.scalars(select(Transaction)).all()
+    transactions = Transaction.get_all(db)
 
     if not transactions:
         raise HTTPException(
@@ -17,17 +19,16 @@ def read_transactions(db: Session) -> TransactionsResponse:
             detail="No transactions found",
         )
 
-    return TransactionsResponse(transactions=transactions)
+    return TransactionsResponse(transactions=list(transactions))
 
 
 def get_or_create_transaction(db: Session, transaction: TransactionBase) -> int:
 
-    existing_transaction = db.scalar(
-        select(Transaction).where(
-            Transaction.type == transaction.type,
-            Transaction.title == transaction.title,
-            Transaction.category_id == transaction.category_id,
-        )
+    existing_transaction = Transaction.get_one(
+        db,
+        type=transaction.type,
+        title=transaction.title,
+        category_id=transaction.category_id,
     )
 
     if existing_transaction:
@@ -35,8 +36,6 @@ def get_or_create_transaction(db: Session, transaction: TransactionBase) -> int:
 
     new_transaction = Transaction(**transaction.model_dump())
 
-    db.add(new_transaction)
-    db.commit()
-    db.refresh(new_transaction)
+    add_commit_refresh(db, new_transaction)
 
     return new_transaction.id

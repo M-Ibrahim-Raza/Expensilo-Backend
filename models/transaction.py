@@ -4,8 +4,7 @@ from sqlalchemy import String, BigInteger, ForeignKey, Enum, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from enums import TransactionType
-from .base import Base
-
+from db import Base
 
 class Transaction(Base):
     __tablename__ = "transaction"

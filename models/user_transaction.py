@@ -6,7 +6,7 @@ from sqlalchemy import BigInteger, ForeignKey, String, Numeric, DateTime, func
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from .base import Base
+from db import Base
 
 
 class UserTransaction(Base):

@@ -4,6 +4,8 @@ from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from db import add_commit_refresh
+
 from models import Transaction, UserTransaction
 from schemas.transaction import TransactionBase
 from schemas.user_transaction import (
@@ -40,8 +42,6 @@ def add_user_transaction(
         db=db, category_name=user_transaction_request.category
     )
 
-    print("category_id : ", category_id)
-
     transaction: TransactionBase = TransactionBase(
         category_id=category_id,
         **user_transaction_request.model_dump(include={"type", "title"}),
@@ -59,9 +59,7 @@ def add_user_transaction(
 
     new_user_transaction = UserTransaction(**user_transaction_create.model_dump())
 
-    db.add(new_user_transaction)
-    db.commit()
-    db.refresh(new_user_transaction)
+    add_commit_refresh(db, new_user_transaction)
 
     user_transaction_response: UserTransactionResponse = (
         UserTransactionResponse.from_orm_obj(new_user_transaction)

@@ -5,7 +5,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 
 from core import settings
-from models import Base
+from  .base import Base
 
 
 engine = create_engine(
@@ -46,3 +46,14 @@ def get_db_session() -> Generator[Session, None, None]:
         yield db
     finally:
         db.close()
+
+
+def add_commit_refresh(db: Session, obj):
+    db.add(obj)
+    try:
+        db.commit()
+    except Exception:
+        db.rollback()
+        raise
+    db.refresh(obj)
+    return obj

@@ -2,6 +2,8 @@ from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from db import add_commit_refresh
+
 from models import Category, UserCategory
 from schemas.category import CategoriesResponse
 from schemas.user_category import UserCategoryResponse
@@ -25,12 +27,7 @@ def add_user_category(
 
     category_id: int = get_or_create_category(db=db, category_name=category_name)
 
-    existing_link = db.scalar(
-        select(UserCategory).where(
-            UserCategory.user_id == user_id,
-            UserCategory.category_id == category_id,
-        )
-    )
+    existing_link = UserCategory.get_one(db,user_id=user_id, category_id=category_id)
 
     if existing_link:
         raise HTTPException(
@@ -39,9 +36,8 @@ def add_user_category(
         )
 
     new_user_category = UserCategory(user_id=user_id, category_id=category_id)
-    db.add(new_user_category)
-    db.commit()
-    db.refresh(new_user_category)
+
+    add_commit_refresh(db, new_user_category)
 
     return UserCategoryResponse.model_validate(new_user_category)
 
@@ -65,6 +61,9 @@ def delete_user_category(db: Session, user_id: int, category_name: str):
     category: Category = user_category_to_delete.category
 
     db.delete(user_category_to_delete)
+    db.flush()
+
+    db.refresh(category)
 
     if not category.users:
         db.delete(category)

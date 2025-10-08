@@ -1,8 +1,12 @@
-from sqlalchemy.orm import Session
-from models import User
 from typing import Optional
-from schemas.user import UserCreateRequest, UserResponse, UserUpdateRequest
+
 from fastapi import HTTPException, status
+from sqlalchemy.orm import Session
+
+from db import add_commit_refresh
+
+from models import User
+from schemas.user import UserCreateRequest, UserResponse, UserUpdateRequest
 
 
 def get_user(db: Session, user_id: int) -> Optional[User]:
@@ -27,13 +31,11 @@ def read_user(db: Session, user_id: int) -> UserResponse:
 
 def create_user(db: Session, user_create_request: UserCreateRequest) -> UserResponse:
 
-    user: User = User(**user_create_request.model_dump())
+    new_user: User = User(**user_create_request.model_dump())
 
-    db.add(user)
-    db.commit()
-    db.refresh(user)
+    add_commit_refresh(db, new_user)
 
-    return UserResponse.model_validate(user)
+    return UserResponse.model_validate(new_user)
 
 
 def delete_user(db: Session, user_id: int) -> UserResponse:

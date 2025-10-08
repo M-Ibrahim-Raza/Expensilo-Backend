@@ -67,9 +67,9 @@ class UserTransactionCreate(UserTranactionBase):
 class UserTransactionRequest(UserTranactionBase):
 
     category: Annotated[
-        str,
+        str | None,
         Field(
-            ...,
+            None,
             title="Category Name",
             description="The unique name of the category",
             example="Rent",
@@ -147,7 +147,9 @@ class UserTransactionResponse(UserTransactionRequest):
             attachments=obj.attachments,
             created_at=obj.created_at,
             updated_at=obj.updated_at,
-            category=obj.transaction.category.name,
+            category=(
+                obj.transaction.category.name if obj.transaction.category else None
+            ),
             type=obj.transaction.type if obj.transaction else None,
             title=obj.transaction.title if obj.transaction else None,
         )

@@ -8,9 +8,9 @@ from enums import TransactionType
 class TransactionBase(BaseModel):
 
     category_id: Annotated[
-        int,
+        int|None,
         Field(
-            ...,
+            None,
             title="Category ID",
             description="The unique ID of the category",
             example=1,
