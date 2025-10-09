@@ -1,9 +1,11 @@
 from typing import Optional, Any
+
 from typing_extensions import Annotated
 from pydantic import BaseModel, EmailStr, Field, ConfigDict
 
 
 class UserBase(BaseModel):
+
     name: Annotated[
         str,
         Field(
@@ -50,13 +52,24 @@ class UserBase(BaseModel):
 
 
 class UserCreateRequest(UserBase):
-    """Schema for creating a new user"""
-
     pass
 
 
+class UserResponse(UserBase):
+
+    id: Annotated[
+        int,
+        Field(
+            title="User ID",
+            description="Unique identifier for the user",
+            example=1,
+        ),
+    ]
+
+    model_config = ConfigDict(from_attributes=True)
+
+
 class UserUpdateRequest(BaseModel):
-    """Schema for updating user fields"""
 
     name: Annotated[
         Optional[str],
@@ -94,18 +107,3 @@ class UserUpdateRequest(BaseModel):
             default=None,
         ),
     ]
-
-
-class UserReadResponse(UserBase):
-    """Schema for returning user details"""
-
-    id: Annotated[
-        int,
-        Field(
-            title="User ID",
-            description="Unique identifier for the user",
-            example=1,
-        ),
-    ]
-
-    model_config = ConfigDict(from_attributes=True)

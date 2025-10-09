@@ -1,13 +1,16 @@
-from pydantic import BaseModel, Field, ConfigDict
 from typing import Annotated
-from enums.transaction_type import TransactionType
+
+from pydantic import BaseModel, Field, ConfigDict
+
+from enums import TransactionType
 
 
 class TransactionBase(BaseModel):
+
     category_id: Annotated[
-        int,
+        int|None,
         Field(
-            ...,
+            None,
             title="Category ID",
             description="The unique ID of the category",
             example=1,
@@ -29,6 +32,7 @@ class TransactionBase(BaseModel):
 
 
 class TransactionRead(TransactionBase):
+
     id: Annotated[
         int,
         Field(
@@ -42,7 +46,8 @@ class TransactionRead(TransactionBase):
     model_config = ConfigDict(from_attributes=True)
 
 
-class TransactionsReadResponse(BaseModel):
+class TransactionsResponse(BaseModel):
+
     transactions: Annotated[
         list[TransactionRead],
         Field(title="Transaction List", description="The list of all the transaction"),

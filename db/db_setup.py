@@ -1,32 +1,27 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, Session
-from core.config import settings
-from models import Base
 from contextlib import contextmanager
 from typing import Generator
+
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, Session
+
+from core import settings
+from models import Base
+
 
 engine = create_engine(
     settings.DATABASE_URL,
     echo=False,
-    pool_pre_ping=True,  # Verify connections before using
+    pool_pre_ping=True,
     pool_size=5,
     max_overflow=10,
 )
 
 
 def init_db() -> None:
-    """
-    Initialize database - Create all tables
-    Call this once when setting up the application
-    """
     Base.metadata.create_all(bind=engine)
 
 
 def drop_db() -> None:
-    """
-    Drop all tables - Use with caution!
-    Only for development/testing
-    """
     Base.metadata.drop_all(bind=engine)
 
 
@@ -35,15 +30,6 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=True, bind=engine)
 
 @contextmanager
 def get_db() -> Generator[Session, None, None]:
-    """
-    Context manager for database sessions
-    Ensures proper session cleanup
-
-    Usage:
-        with get_db() as db:
-            # Use db session here
-            pass
-    """
     db = SessionLocal()
     try:
         yield db
@@ -55,16 +41,19 @@ def get_db() -> Generator[Session, None, None]:
 
 
 def get_db_session() -> Generator[Session, None, None]:
-    """
-    Get database session (for FastAPI dependency injection)
-
-    Usage with FastAPI:
-        @app.get("/users")
-        def get_users(db: Session = Depends(get_db_session)):
-            return db.query(User).all()
-    """
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
+
+
+def add_commit_refresh(db: Session, obj):
+    db.add(obj)
+    try:
+        db.commit()
+    except Exception:
+        db.rollback()
+        raise
+    db.refresh(obj)
+    return obj

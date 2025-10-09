@@ -1,8 +1,10 @@
-from pydantic import BaseModel, Field, ConfigDict
 from typing import Annotated, Optional, Type
 from decimal import Decimal
 from datetime import datetime
-from enums.transaction_type import TransactionType
+
+from pydantic import BaseModel, Field, ConfigDict
+
+from enums import TransactionType
 from models import UserTransaction
 
 
@@ -65,9 +67,9 @@ class UserTransactionCreate(UserTranactionBase):
 class UserTransactionRequest(UserTranactionBase):
 
     category: Annotated[
-        str,
+        str | None,
         Field(
-            ...,
+            None,
             title="Category Name",
             description="The unique name of the category",
             example="Rent",
@@ -145,13 +147,16 @@ class UserTransactionResponse(UserTransactionRequest):
             attachments=obj.attachments,
             created_at=obj.created_at,
             updated_at=obj.updated_at,
-            category=obj.transaction.category.name,
+            category=(
+                obj.transaction.category.name if obj.transaction.category else None
+            ),
             type=obj.transaction.type if obj.transaction else None,
             title=obj.transaction.title if obj.transaction else None,
         )
 
 
 class UserTransactionsResponse(BaseModel):
+
     transactions: Annotated[
         list[UserTransactionResponse],
         Field(

@@ -1,11 +1,13 @@
-from sqlalchemy.orm import Session
+from decimal import Decimal
+
 from fastapi import HTTPException, status
 from sqlalchemy import select
-from services.transaction import get_or_create_transaction
+from sqlalchemy.orm import Session
+
+from db import add_commit_refresh
+
+from models import Transaction, UserTransaction
 from schemas.transaction import TransactionBase
-from services.user import get_user
-from services.category import get_category_id
-from models import UserTransaction, Transaction
 from schemas.user_transaction import (
     UserTransactionResponse,
     UserTransactionRequest,
@@ -13,7 +15,9 @@ from schemas.user_transaction import (
     UserTransactionsResponse,
     UserTransactionUpdateRequest,
 )
-from decimal import Decimal
+from services.category import get_category_id
+from services.transaction import get_or_create_transaction
+from services.user import get_user
 
 
 def read_user_transactions(db: Session, user_id: int) -> UserTransactionsResponse:
@@ -38,8 +42,6 @@ def add_user_transaction(
         db=db, category_name=user_transaction_request.category
     )
 
-    print("category_id : ", category_id)
-
     transaction: TransactionBase = TransactionBase(
         category_id=category_id,
         **user_transaction_request.model_dump(include={"type", "title"}),
@@ -57,9 +59,7 @@ def add_user_transaction(
 
     new_user_transaction = UserTransaction(**user_transaction_create.model_dump())
 
-    db.add(new_user_transaction)
-    db.commit()
-    db.refresh(new_user_transaction)
+    add_commit_refresh(db, new_user_transaction)
 
     user_transaction_response: UserTransactionResponse = (
         UserTransactionResponse.from_orm_obj(new_user_transaction)

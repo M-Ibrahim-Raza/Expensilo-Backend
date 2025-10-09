@@ -1,8 +1,9 @@
-from typing import Optional
 from datetime import datetime
-from sqlalchemy import BigInteger, ForeignKey, func, Numeric, String, DateTime
-from sqlalchemy.dialects.postgresql import ARRAY
 from decimal import Decimal
+from typing import Optional
+
+from sqlalchemy import BigInteger, ForeignKey, String, Numeric, DateTime, func
+from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
@@ -60,8 +61,6 @@ class UserTransaction(Base):
         onupdate=func.current_timestamp(),
         comment="Update timestamp",
     )
-
-    # =====================| TO BE REVIEWED | =====================
 
     user = relationship("User", back_populates="transactions", lazy="joined")
 

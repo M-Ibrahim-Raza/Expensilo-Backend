@@ -1,21 +1,24 @@
-from fastapi import APIRouter, status, Depends, Path
 from typing import Annotated
-from schemas.category import CategoriesReadResponse
-from services.category import read_categories, read_category_users
+
+from fastapi import APIRouter, status, Depends, Path
+
 from db import get_db_session
+from schemas.category import CategoriesResponse
+from services.category import read_categories, read_category_users
+
 
 router = APIRouter(prefix="/category", tags=["Category"])
 
 
 @router.get(
     "",
-    response_model=CategoriesReadResponse,
+    response_model=CategoriesResponse,
     status_code=status.HTTP_200_OK,
     summary="Get all categories",
     response_description="The list of all categories",
 )
-def get_categories_endpoint(db=Depends(get_db_session)) -> CategoriesReadResponse:
-    categories: CategoriesReadResponse = read_categories(db=db)
+def get_categories_endpoint(db=Depends(get_db_session)) -> CategoriesResponse:
+    categories: CategoriesResponse = read_categories(db=db)
     return categories
 
 
