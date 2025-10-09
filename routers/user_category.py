@@ -11,9 +11,9 @@ from services.user_category import (
     read_user_categories,
     delete_user_category,
 )
+from auth import get_current_user_id
 
-
-router = APIRouter(prefix="/users/{user_id}/category", tags=["Users Category"])
+router = APIRouter(prefix="/users/category", tags=["Users Category"])
 
 
 @router.get(
@@ -24,9 +24,7 @@ router = APIRouter(prefix="/users/{user_id}/category", tags=["Users Category"])
     response_description="List of categories names",
 )
 def get_user_categories_endpoint(
-    user_id: Annotated[
-        int, Path(..., title="User ID", description="Unique ID of the user")
-    ],
+    user_id: int = Depends(get_current_user_id),
     db: Session = Depends(get_db_session),
 ) -> CategoriesResponse:
 
@@ -43,10 +41,8 @@ def get_user_categories_endpoint(
     response_description="IDs of user and category",
 )
 def add_user_category_endpoint(
-    user_id: Annotated[
-        int, Path(..., title="User ID", description="Unique ID of the user")
-    ],
     user_category_request: UserCategoryRequest,
+    user_id: int = Depends(get_current_user_id),
     db: Session = Depends(get_db_session),
 ) -> UserCategoryResponse:
 
@@ -63,12 +59,10 @@ def add_user_category_endpoint(
     summary="Delete user category",
 )
 def delete_user_category_endpoint(
-    user_id: Annotated[
-        int, Path(..., title="User ID", description="Unique ID of the user")
-    ],
     category_name: Annotated[
         str, Path(..., title="Category Name", description="Name of the Category")
     ],
+    user_id: int = Depends(get_current_user_id),
     db: Session = Depends(get_db_session),
 ) -> None:
 
