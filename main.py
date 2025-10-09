@@ -4,8 +4,7 @@ from fastapi.responses import JSONResponse
 
 from sqlalchemy.exc import IntegrityError
 
-from routers import user, category, user_category, transaction, user_transaction
-
+from routers import user, category, user_category, transaction, user_transaction, auth
 
 app = FastAPI()
 
@@ -27,6 +26,7 @@ app.add_middleware(
 )
 
 
+app.include_router(auth.router)
 app.include_router(user.router)
 app.include_router(category.router)
 app.include_router(user_category.router)

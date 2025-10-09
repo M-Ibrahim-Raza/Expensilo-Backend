@@ -14,6 +14,7 @@ class UserBase(BaseModel):
             example="Alice Example",
         ),
     ]
+
     email: Annotated[
         EmailStr,
         Field(
@@ -22,6 +23,7 @@ class UserBase(BaseModel):
             example="alice@example.com",
         ),
     ]
+
     password: Annotated[
         Optional[str],
         Field(
@@ -31,6 +33,7 @@ class UserBase(BaseModel):
             default=None,
         ),
     ]
+
     google_auth: Annotated[
         Optional[str],
         Field(
