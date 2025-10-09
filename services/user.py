@@ -7,6 +7,7 @@ from db import add_commit_refresh
 
 from models import User
 from schemas.user import UserCreateRequest, UserResponse, UserUpdateRequest
+from auth import get_password_hash, verify_password
 
 
 def get_user(db: Session, user_id: int) -> Optional[User]:
@@ -22,6 +23,19 @@ def get_user(db: Session, user_id: int) -> Optional[User]:
     return user
 
 
+def authenticate_user(db: Session, email: str, password: str) -> User | None:
+
+    user: User | None = User.get_one(db, email=email)
+
+    if not user:
+        return None
+
+    if not verify_password(password, user.hashed_password):
+        return None
+
+    return user
+
+
 def read_user(db: Session, user_id: int) -> UserResponse:
 
     user = get_user(db=db, user_id=user_id)
@@ -31,7 +45,17 @@ def read_user(db: Session, user_id: int) -> UserResponse:
 
 def create_user(db: Session, user_create_request: UserCreateRequest) -> UserResponse:
 
-    new_user: User = User(**user_create_request.model_dump())
+    new_user_data = user_create_request.model_dump()
+
+    if new_user_data["password"]:
+        del new_user_data["password"]
+
+    if user_create_request.password:
+        new_user_data["hashed_password"] = get_password_hash(
+            user_create_request.password
+        )
+
+    new_user: User = User(**new_user_data)
 
     add_commit_refresh(db, new_user)
 
@@ -40,7 +64,7 @@ def create_user(db: Session, user_create_request: UserCreateRequest) -> UserResp
 
 def delete_user(db: Session, user_id: int) -> UserResponse:
 
-    user: User = get_user(db=db, user_id=user_id)
+    user: User | None = get_user(db=db, user_id=user_id)
 
     deleted_user = UserResponse.model_validate(user)
 
@@ -54,9 +78,15 @@ def update_user(
     db: Session, user_id: int, user_update_request: UserUpdateRequest
 ) -> UserResponse:
 
-    user = get_user(db=db, user_id=user_id)
+    user: User | None = get_user(db=db, user_id=user_id)
 
     update_data = user_update_request.model_dump(exclude_unset=True, exclude_none=True)
+
+    if update_data.get("password"):
+        del update_data["password"]
+
+    if user_update_request.password:
+        update_data["hashed_password"] = get_password_hash(user_update_request.password)
 
     for field, value in update_data.items():
         setattr(user, field, value)

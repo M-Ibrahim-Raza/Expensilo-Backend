@@ -16,9 +16,9 @@ from services.user_transaction import (
     delete_user_transaction,
     update_user_transaction,
 )
+from auth import get_current_user_id
 
-
-router = APIRouter(prefix="/users/{user_id}/transaction", tags=["Users Transaction"])
+router = APIRouter(prefix="/users/transaction", tags=["Users Transaction"])
 
 
 @router.get(
@@ -29,9 +29,7 @@ router = APIRouter(prefix="/users/{user_id}/transaction", tags=["Users Transacti
     response_description="List of transactions of a user",
 )
 def get_user_transactions_endpoint(
-    user_id: Annotated[
-        int, Path(..., title="User ID", description="Unique ID of the user")
-    ],
+    user_id: int = Depends(get_current_user_id),
     db: Session = Depends(get_db_session),
 ) -> UserTransactionsResponse:
 
@@ -50,10 +48,8 @@ def get_user_transactions_endpoint(
     response_description="Details of user transaction",
 )
 def add_user_transaction_endpoint(
-    user_id: Annotated[
-        int, Path(..., title="User ID", description="Unique ID of the user")
-    ],
     user_transaction_request: UserTransactionRequest,
+    user_id: int = Depends(get_current_user_id),
     db: Session = Depends(get_db_session),
 ) -> UserTransactionResponse:
 
@@ -73,9 +69,6 @@ def add_user_transaction_endpoint(
     summary="Updates user transaction",
 )
 def update_user_transaction_endpoint(
-    user_id: Annotated[
-        int, Path(..., title="User ID", description="Unique ID of the user")
-    ],
     user_transaction_id: Annotated[
         int,
         Path(
@@ -83,6 +76,7 @@ def update_user_transaction_endpoint(
         ),
     ],
     user_transaction_update_request: UserTransactionUpdateRequest,
+    user_id: int = Depends(get_current_user_id),
     db: Session = Depends(get_db_session),
 ) -> UserTransactionResponse:
 
@@ -103,15 +97,13 @@ def update_user_transaction_endpoint(
     summary="Delete user transaction",
 )
 def delete_user_transaction_endpoint(
-    user_id: Annotated[
-        int, Path(..., title="User ID", description="Unique ID of the user")
-    ],
     user_transaction_id: Annotated[
         int,
         Path(
             ..., title="Transaction ID", description="Unique ID of the user transaction"
         ),
     ],
+    user_id: int = Depends(get_current_user_id),
     db: Session = Depends(get_db_session),
 ) -> UserTransactionResponse:
 

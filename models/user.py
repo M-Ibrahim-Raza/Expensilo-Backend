@@ -27,8 +27,8 @@ class User(Base):
         String, nullable=False, unique=True, comment="User's email address"
     )
 
-    password: Mapped[Optional[str]] = mapped_column(
-        String, nullable=True, comment="password for authentication"
+    hashed_password: Mapped[Optional[str]] = mapped_column(
+        String, nullable=True, comment="hashed password for authentication"
     )
 
     google_auth: Mapped[Optional[str]] = mapped_column(
