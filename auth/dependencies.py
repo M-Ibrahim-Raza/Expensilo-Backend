@@ -1,7 +1,7 @@
-# dependencies.py
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
+from jose.exceptions import ExpiredSignatureError
 from sqlalchemy.orm import Session
 from db import get_db_session
 from models import User
@@ -30,6 +30,9 @@ def get_current_user_id(
 
         if user_id is None:
             raise credentials_exception
+
+    except ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token expired")
 
     except JWTError:
         raise credentials_exception
