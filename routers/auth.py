@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 from db import get_db_session
-from auth import create_access_token, oauth2_scheme
+from auth import create_access_token, get_current_user_id
 from schemas.user import UserResponse
 from schemas.auth import SignUpRequest, Token
 from services.user import create_user, authenticate_user
@@ -39,3 +39,10 @@ async def login_for_access_token(
         )
     access_token = create_access_token(data={"sub": user.email, "user_id": user.id})
     return {"access_token": access_token, "token_type": "bearer"}
+
+
+@router.get("/verify-token", response_model=dict)
+async def verify_token_endpoint(
+    user_id: int = Depends(get_current_user_id),
+):
+    return {"user_id": user_id}
