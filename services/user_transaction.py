@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from db import add_commit_refresh
 
-from models import Transaction, UserTransaction
+from models import Transaction, UserTransaction, UserCategory
 from schemas.transaction import TransactionBase
 from schemas.user_transaction import (
     UserTransactionResponse,
@@ -15,7 +15,7 @@ from schemas.user_transaction import (
     UserTransactionsResponse,
     UserTransactionUpdateRequest,
 )
-from services.category import get_category_id
+from services.category import get_category_id, get_or_create_category
 from services.transaction import get_or_create_transaction
 from services.user import get_user
 
@@ -38,9 +38,15 @@ def add_user_transaction(
     db: Session, user_id: int, user_transaction_request: UserTransactionRequest
 ) -> UserTransactionResponse:
 
-    category_id: int = get_category_id(
+    category_id: int = get_or_create_category(
         db=db, category_name=user_transaction_request.category
     )
+
+    existing_link = UserCategory.get_one(db, user_id=user_id, category_id=category_id)
+
+    if not existing_link:
+        new_user_category = UserCategory(user_id=user_id, category_id=category_id)
+        add_commit_refresh(db, new_user_category)
 
     transaction: TransactionBase = TransactionBase(
         category_id=category_id,
@@ -140,7 +146,16 @@ def update_user_transaction(
         user_transaction_to_update.attachments = data["attachments"]
 
     if "category" in data:
-        category_id = get_category_id(data["category"])
+        category_id: int = get_or_create_category(db=db, category_name=data["category"])
+
+        existing_link = UserCategory.get_one(
+            db, user_id=user_id, category_id=category_id
+        )
+
+        if not existing_link:
+            new_user_category = UserCategory(user_id=user_id, category_id=category_id)
+            add_commit_refresh(db, new_user_category)
+
         user_transaction_to_update.transaction.category_id = category_id
 
     if "type" in data:
