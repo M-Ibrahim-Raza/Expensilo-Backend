@@ -1,7 +1,6 @@
 databases:
   - name: expensilo-db
     databaseName: expensilo
-    user: postgres
 
 services:
   - type: web
