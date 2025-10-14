@@ -1,0 +1,12 @@
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+*.ipynb
+.env
+.git
+test
+venv
+env
+dist
+build
