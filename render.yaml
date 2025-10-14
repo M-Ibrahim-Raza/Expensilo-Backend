@@ -1,3 +1,8 @@
+databases:
+  - name: expensilo-db
+    databaseName: expensilo
+    user: postgres
+
 services:
   - type: web
     name: fastapi-backend
@@ -13,23 +18,7 @@ services:
       - key: ACCESS_TOKEN_EXPIRE_MINUTES
         value: "180"
       - key: DATABASE_URL
-        value: postgresql://postgres:1234@postgres-db:5432/expensilo
+        fromDatabase:
+          name: expensilo-db
+          property: connectionString
     autoDeploy: true
-
-  - type: pserv
-    name: postgres-db
-    env: docker
-    dockerContext: .
-    image: postgres:15
-    plan: free
-    envVars:
-      - key: POSTGRES_USER
-        value: postgres
-      - key: POSTGRES_PASSWORD
-        value: 1234
-      - key: POSTGRES_DB
-        value: expensilo
-    disk:
-      name: pgdata
-      mountPath: /var/lib/postgresql/data
-      sizeGB: 1
