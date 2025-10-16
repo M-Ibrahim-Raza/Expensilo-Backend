@@ -15,9 +15,6 @@ The project follows a **clean architecture** with separate layers for **database
 6. [Database Design](#database-design)
 7. [Setup Instructions](#setup-instructions)
 8. [Best Practices Implemented](#best-practices-implemented)
-9. [Future Enhancements](#future-enhancements)
-10. [License](#license)
-
 ---
 
 ## Overview
@@ -54,7 +51,8 @@ Each resource (`User`, `Category`, `Transaction`, etc.) has its own modular impl
 ---
 
 ## Features
-
+* **JWT Authentication & Login** – Implemented secure user authentication with hashed passwords and JWT access tokens.
+* **Password Security** – Added password hashing and verification to protect user credentials and secure all endpoints.
 * **User Management:** Create, update, delete, and fetch users.
 * **Category Management:** Manage global and user-specific categories.
 * **Transaction Management:** CRUD operations on user transactions.
@@ -63,13 +61,16 @@ Each resource (`User`, `Category`, `Transaction`, etc.) has its own modular impl
 * **Database Layer:** SQLAlchemy ORM with declarative base and scoped sessions.
 * **OpenAPI Support:** Auto-generated documentation via FastAPI (`/docs`, `/redoc`).
 * **JSON-based Preferences:** Users can store flexible key-value preferences.
+* **Dockerization:** Containerized backend using Docker.
 
 ---
 
 ## API Endpoints Overview
-
-| Module              | Endpoint                                             | Method | Summary                    |
-| ------------------- | ---------------------------------------------------- | ------ | -------------------------- |
+| Module             | Endpoint             | Method | Summary                             |
+| ------------------ | -------------------- | ------ | ----------------------------------- |
+| **Authentication** | `/auth/signup`       | POST   | Sign up a new user                  |
+|                    | `/auth/login`        | POST   | Login user and return JWT token     |
+|                    | `/auth/verify-token` | GET    | Verify JWT token and return user ID |
 | **User**            | `/users`                                             | POST   | Create new user            |
 |                     | `/users/{user_id}`                                   | GET    | Get user details           |
 |                     | `/users/{user_id}`                                   | PUT    | Update existing user       |
@@ -87,7 +88,7 @@ Each resource (`User`, `Category`, `Transaction`, etc.) has its own modular impl
 
 ---
 
-## 🗂 Project Structure
+## Project Structure
 
 ```bash
 app/
@@ -113,16 +114,17 @@ app/
 │   ├── user_category.py
 │
 ├── services/
-│   ├── user_service.py
-│   ├── category_service.py
-│   ├── transaction_service.py
-│   ├── user_transaction_service.py
+│   ├── user.py
+│   ├── category.py
+│   ├── transaction.py
+│   ├── user_transaction.py
 │
 ├── routers/
-│   ├── user_router.py
-│   ├── category_router.py
-│   ├── transaction_router.py
-│   ├── user_transaction_router.py
+│   ├── auth.py
+│   ├── user.py
+│   ├── category.py
+│   ├── transaction.py
+│   ├── user_transaction.py
 │
 └── main.py                     # FastAPI app initialization and route registration
 ```
@@ -214,12 +216,5 @@ Access API documentation:
 * Follows **PEP8** and **FastAPI best practices**.
 * Reusable utilities and mixins instead of repeated CRUD logic.
 * Explicit imports with `__all__` for cleaner module exports.
-
----
-
-## Future Enhancements
-
-* JWT-based authentication system.
-* Dockerized deployment setup.
 
 ---
