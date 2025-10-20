@@ -1,6 +1,7 @@
 from typing import Annotated
 
 from fastapi import APIRouter, status, Path, Depends
+from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 
 from db import get_db_session
@@ -9,12 +10,15 @@ from schemas.user_transaction import (
     UserTransactionResponse,
     UserTransactionsResponse,
     UserTransactionUpdateRequest,
+    ExportRequest,
 )
 from services.user_transaction import (
     add_user_transaction,
     read_user_transactions,
     delete_user_transaction,
     update_user_transaction,
+    generate_CSV,
+    generate_PDF,
 )
 from auth import get_current_user_id
 
@@ -52,8 +56,6 @@ def add_user_transaction_endpoint(
     user_id: int = Depends(get_current_user_id),
     db: Session = Depends(get_db_session),
 ) -> UserTransactionResponse:
-
-    print(user_transaction_request)
 
     user_transaction_response: UserTransactionRequest = add_user_transaction(
         db=db, user_id=user_id, user_transaction_request=user_transaction_request
@@ -112,3 +114,48 @@ def delete_user_transaction_endpoint(
     )
 
     return deleted_user_transaction
+
+
+@router.post(
+    "/export-csv",
+    status_code=status.HTTP_200_OK,
+    responses={
+        200: {"content": {"text/csv": {}}},
+        404: {"description": "File not found"},
+    },
+    summary="Download the transactions CSV file",
+    response_description="Returns a CSV file containing exported transactions.",
+)
+def export_csv_endpoint(transactions: ExportRequest):
+    file_path = generate_CSV(data=transactions)
+
+    return FileResponse(
+        path=file_path,
+        status_code=status.HTTP_200_OK,
+        media_type="text/csv",
+        filename="transactions.csv",
+        headers={"Content-Disposition": f'attachment; filename="transactions.csv"'},
+    )
+
+
+@router.post(
+    "/export-pdf",
+    status_code=status.HTTP_200_OK,
+    responses={
+        200: {"content": {"application/pdf": {}}},
+        404: {"description": "File not found"},
+    },
+    summary="Download the transactions PDF file",
+    response_description="Returns a PDF file containing exported transactions.",
+)
+def export_pdf_endpoint(transactions: ExportRequest):
+
+    file_path = generate_PDF(data=transactions)
+
+    return FileResponse(
+        path=file_path,
+        status_code=status.HTTP_200_OK,
+        media_type="application/pdf",
+        filename="transactions.pdf",
+        headers={"Content-Disposition": f'attachment; filename="transactions.pdf"'},
+    )

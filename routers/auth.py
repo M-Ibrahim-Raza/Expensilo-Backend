@@ -20,6 +20,14 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 )
 def signup(sign_up_request: SignUpRequest, db: Session = Depends(get_db_session)):
     sign_up_user: UserResponse = create_user(db=db, user_create_request=sign_up_request)
+
+    if type(sign_up_user) is str:
+        raise HTTPException(
+            status_code=401,
+            detail=sign_up_user,
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
     return sign_up_user
 
 
@@ -31,10 +39,11 @@ async def login_for_access_token(
     user = authenticate_user(
         db=db, email=form_data.username, password=form_data.password
     )
-    if not user:
+
+    if type(user) is str:
         raise HTTPException(
             status_code=401,
-            detail="Incorrect username or password",
+            detail=user,
             headers={"WWW-Authenticate": "Bearer"},
         )
     access_token = create_access_token(data={"sub": user.email, "user_id": user.id})

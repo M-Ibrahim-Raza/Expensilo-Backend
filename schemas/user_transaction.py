@@ -40,6 +40,16 @@ class UserTranactionBase(BaseModel):
         ),
     ]
 
+    created_at: Annotated[
+        datetime | None,
+        Field(
+            None,
+            title="Created At",
+            description="Timestamp when the transaction was created",
+            example="2025-10-07T12:30:00Z",
+        ),
+    ]
+
 
 class UserTransactionCreate(UserTranactionBase):
 
@@ -209,6 +219,16 @@ class UserTransactionUpdateRequest(BaseModel):
         ),
     ]
 
+    created_at: Annotated[
+        datetime | None,
+        Field(
+            None,
+            title="Created At",
+            description="Timestamp when the transaction was created",
+            example="2025-10-07T12:30:00Z",
+        ),
+    ]
+
     type: Annotated[
         TransactionType | None,
         Field(
@@ -221,4 +241,16 @@ class UserTransactionUpdateRequest(BaseModel):
     title: Annotated[
         str | None,
         Field(None, title="Transaction Title", description="Title of transaction"),
+    ]
+
+
+class ExportRequest(BaseModel):
+
+    transactions: Annotated[
+        list[UserTransactionResponse],
+        Field(
+            ...,
+            title="User Transaction List",
+            description="List of transactions of a user",
+        ),
     ]
