@@ -28,10 +28,10 @@ def authenticate_user(db: Session, email: str, password: str) -> User | None:
     user: User | None = User.get_one(db, email=email)
 
     if not user:
-        return None
+        return "Incorrect email"
 
     if not verify_password(password, user.hashed_password):
-        return None
+        return "Incorrect password"
 
     return user
 
@@ -44,6 +44,11 @@ def read_user(db: Session, user_id: int) -> UserResponse:
 
 
 def create_user(db: Session, user_create_request: UserCreateRequest) -> UserResponse:
+
+    is_email_exist = User.get_one(db, email=user_create_request.email)
+
+    if is_email_exist:
+        return "Email already exist"
 
     new_user_data = user_create_request.model_dump()
 

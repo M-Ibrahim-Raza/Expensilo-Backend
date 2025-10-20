@@ -69,3 +69,5 @@ def delete_user_category(db: Session, user_id: int, category_name: str):
         db.delete(category)
 
     db.commit()
+
+
